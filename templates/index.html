@@ -21,10 +21,9 @@
     <script>
       var map = L.map('map').setView([60.170827, 24.940218], 12);
 
-      L.tileLayer('http://{s}.tile.cloudmade.com/{key}/22677/256/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade',
-        key: 'BC9A493B41014CAABB98F0471D759707'
-      }).addTo(map);
+      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var osmAttrib='Map data © OpenStreetMap contributors';
+      var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 12, attribution: osmAttrib}).addTo(map);
 
       $.ajax({
         dataType: "json",
