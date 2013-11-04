@@ -12,12 +12,8 @@ def hello():
 
 @app.route('/data')
 def data():
-  f = urllib2.urlopen('http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm')
-  data = json.loads(str(f.read()), encoding='UTF-8')
-  f.close()
-
+  data = load_json("http://apps.mcdon" + 'alds.se/fi/stores.nsf/markers?ReadForm')
   features = []
-
   for m in data["markers"]:
     features.append(
       { 'type': 'Feature', 
@@ -33,7 +29,18 @@ def data():
     'features': features
   }
 
-  return json.dumps(geojson), 200, {'Content-Type': 'text/json', 'Access-Control-Allow-Origin:': '*'}
+  headers = {
+    'Content-Type': 'text/json',
+    'Access-Control-Allow-Origin:': '*'
+  }
+
+  return json.dumps(geojson), 200, headers
+
+def load_json(url):
+  f = urllib2.urlopen(url)
+  data = json.loads(str(f.read()), encoding='UTF-8')
+  f.close()
+  return data
 
 if __name__ == "__main__":
   app.run(use_debugger=False, debug=True, use_reloader=True, host='0.0.0.0')
