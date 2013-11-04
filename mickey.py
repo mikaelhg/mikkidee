@@ -1,7 +1,6 @@
 #!/usr/bin/python2
 
-import json, urllib2
-import os
+import urllib2
 from flask import *
 
 app = Flask(__name__)
@@ -17,14 +16,14 @@ def data():
     mcdata = load_json("http://apps.mcdon" + 'alds.se/fi/stores.nsf/markers?ReadForm')
     features = []
     for m in mcdata["markers"]:
-        features.append(
-            {'type': 'Feature',
-             'geometry': {
-                 'type': 'Point',
-                 'coordinates': [float(m['lng']), float(m['lat'])]
-             },
-             'properties': {key: value for (key, value) in m.iteritems()}
-            })
+        features.append({
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [float(m['lng']), float(m['lat'])]
+            },
+            'properties': {key: value for (key, value) in m.iteritems()}
+        })
 
     geojson = {
         'type': 'FeatureCollection',
