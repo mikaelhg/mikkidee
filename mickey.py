@@ -3,17 +3,27 @@
 import urllib2
 from flask import *
 
-app = Flask(__name__)
+html_headers = {
+    'Content-Type': 'text/html;charset=UTF-8'
+}
 
+json_headers = {
+    'Content-Type': 'text/json;charset=UTF-8',
+    'Access-Control-Allow-Origin:': '*'
+}
+
+original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
+
+app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return render_template('index.html'), 200, {'Content-Type': 'text/html;charset=UTF-8'}
+    return render_template('index.html'), 200, html_headers
 
 
 @app.route('/data')
 def data():
-    mcdata = load_json("http://apps.mcdon" + 'alds.se/fi/stores.nsf/markers?ReadForm')
+    mcdata = load_json(original_json_url)
     features = []
     for m in mcdata["markers"]:
         features.append({
@@ -24,18 +34,11 @@ def data():
             },
             'properties': {key: value for (key, value) in m.iteritems()}
         })
-
     geojson = {
         'type': 'FeatureCollection',
         'features': features
     }
-
-    headers = {
-        'Content-Type': 'text/json',
-        'Access-Control-Allow-Origin:': '*'
-    }
-
-    return json.dumps(geojson), 200, headers
+    return json.dumps(geojson), 200, json_headers
 
 
 def load_json(url):
