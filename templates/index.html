@@ -32,9 +32,9 @@
       var map = L.map('map').setView([62.250846, 25.768910], 7);
 
       var osm = L.tileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', {
-	minZoom: 13,
-	maxZoom: 16,
-	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+        minZoom: 13,
+        maxZoom: 16,
+        attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
       });
 
       osm.addTo(map);
@@ -46,18 +46,18 @@
 //      Esri_WorldStreetMap.addTo(map);
 
       var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
-	minZoom: 13,
-	maxZoom: 18,
+        minZoom: 13,
+        maxZoom: 18,
         attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
       });
 
 //      Thunderforest_Transport.addTo(map);
 
       var stamen = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-	subdomains: 'abcd',
-	minZoom: 3,
-	maxZoom: 12
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        subdomains: 'abcd',
+        minZoom: 3,
+        maxZoom: 12
       });
 
       stamen.addTo(map);
@@ -73,7 +73,7 @@
               return feature.properties && feature.properties.style;
             },
             onEachFeature: function(feature, layer) {
-              layer.bindPopup(feature.properties.address);
+              layer.bindPopup(feature.properties.address + ", " + feature.properties.city);
             },
             pointToLayer: function (feature, latlng) {
               return L.circleMarker(latlng, {
@@ -91,16 +91,15 @@
       );
     </script>
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-45419556-1', 'mikkidee.herokuapp.com');
-  ga('send', 'pageview');
-
-</script>
+      ga('create', 'UA-45419556-1', 'mikkidee.herokuapp.com');
+      ga('send', 'pageview');
+    </script>
 
   </body>
 
