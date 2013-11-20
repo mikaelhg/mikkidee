@@ -12,7 +12,8 @@ json_headers = {
     'Access-Control-Allow-Origin:': '*'
 }
 
-original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
+#original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
+original_json_url = 'https://gist.github.com/mikaelhg/95b134c0c751a4532c01/raw/85d58c7c200404e433040e179f573dac9db65666/mickeys.geojson'
 
 app = Flask(__name__)
 
