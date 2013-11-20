@@ -12,8 +12,8 @@ json_headers = {
     'Access-Control-Allow-Origin:': '*'
 }
 
-#original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
-original_json_url = 'https://gist.github.com/mikaelhg/95b134c0c751a4532c01/raw/85d58c7c200404e433040e179f573dac9db65666/mickeys.geojson'
+original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
+gist_geojson_url = 'https://gist.github.com/mikaelhg/95b134c0c751a4532c01/raw/85d58c7c200404e433040e179f573dac9db65666/mickeys.geojson'
 
 app = Flask(__name__)
 
@@ -24,21 +24,24 @@ def hello():
 
 @app.route('/data')
 def data():
-    mcdata = load_json(original_json_url)
-    features = []
-    for m in mcdata["markers"]:
-        features.append({
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [float(m['lng']), float(m['lat'])]
-            },
-            'properties': {key: value for (key, value) in m.iteritems()}
-        })
-    geojson = {
-        'type': 'FeatureCollection',
-        'features': features
-    }
+    try:
+        mcdata = load_json(original_json_url)
+        features = []
+        for m in mcdata["markers"]:
+            features.append({
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [float(m['lng']), float(m['lat'])]
+                },
+                'properties': {key: value for (key, value) in m.iteritems()}
+            })
+        geojson = {
+            'type': 'FeatureCollection',
+            'features': features
+        }
+    except:
+        geojson = load_json(gist_geojson_url)
     return json.dumps(geojson), 200, json_headers
 
 
