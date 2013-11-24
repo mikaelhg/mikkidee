@@ -1,5 +1,6 @@
 #!/usr/bin/python2
 
+import pygeoip
 import urllib2
 from flask import *
 
@@ -22,13 +23,19 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return render_template('index.html'), 200, html_headers
+    gi = pygeoip.GeoIP('GeoLiteCity.dat')
+    location = gi.record_by_addr(request.remote_addr)
+    if location:
+        model = {'lat': location['latitude'], 'lng': location['longitude']}
+    else:
+        model = {'lat': 62.250846, 'lng': 25.768910}
+    return render_template('index.html', **model), 200, html_headers
 
 
 @app.route('/data')
 def data():
     geojson = get_geojson()
-    return json.dumps(geojson), 200, json_headers
+    return jsonify(geojson), 200, json_headers
 
 
 def get_geojson():
