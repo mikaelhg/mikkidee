@@ -27,8 +27,10 @@ app.wsgi_app = SaferProxyFix(app.wsgi_app)
 @app.route('/')
 def hello():
     gi = pygeoip.GeoIP('GeoLiteCity.dat')
+    # examples - finland: 212.149.200.241, sweden: 78.108.0.5, london: 92.40.254.141
     location = gi.record_by_addr(request.remote_addr)
-    if location:
+    print location
+    if location and location['country_code'] in ('FI', 'SE'):
         model = {'lat': location['latitude'], 'lng': location['longitude']}
     else:
         model = {'lat': 62.250846, 'lng': 25.768910}
