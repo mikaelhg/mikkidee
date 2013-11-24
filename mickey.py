@@ -12,10 +12,13 @@ json_headers = {
     'Access-Control-Allow-Origin:': '*'
 }
 
-original_json_url = 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm'
-gist_geojson_url = 'https://gist.github.com/mikaelhg/95b134c0c751a4532c01/raw/85d58c7c200404e433040e179f573dac9db65666/mickeys.geojson'
+country_urls = {
+    'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
+    'se': 'http://apps.mcdonalds.se/sweden/restSite.nsf/markers?ReadForm'
+}
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def hello():
@@ -24,10 +27,18 @@ def hello():
 
 @app.route('/data')
 def data():
-    try:
-        mcdata = load_json(original_json_url)
-        features = []
-        for m in mcdata["markers"]:
+    geojson = get_geojson()
+    return json.dumps(geojson), 200, json_headers
+
+
+def get_geojson():
+    features = []
+    for country, url in country_urls.iteritems():
+        try:
+            mcd_json = load_json(urllib2.urlopen(url))
+        except (urllib2.HTTPError, urllib2.URLError):
+            mcd_json = load_json(open('%s_backup.json' % country, 'r'))
+        for m in mcd_json["markers"]:
             features.append({
                 'type': 'Feature',
                 'geometry': {
@@ -36,19 +47,18 @@ def data():
                 },
                 'properties': {key: value for (key, value) in m.iteritems()}
             })
-        geojson = {
-            'type': 'FeatureCollection',
-            'features': features
-        }
-    except:
-        geojson = load_json(gist_geojson_url)
-    return json.dumps(geojson), 200, json_headers
+    geojson = {
+        'type': 'FeatureCollection',
+        'features': features
+    }
+    return geojson
 
 
-def load_json(url):
-    f = urllib2.urlopen(url)
-    ret = json.loads(str(f.read()), encoding='utf-8')
-    f.close()
+def load_json(handle):
+    try:
+        ret = json.loads(str(handle.read()), encoding='utf-8')
+    finally:
+        handle.close()
     return ret
 
 
