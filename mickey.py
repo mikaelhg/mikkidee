@@ -29,7 +29,6 @@ def hello():
     gi = pygeoip.GeoIP('GeoLiteCity.dat')
     # examples - finland: 212.149.200.241, sweden: 78.108.0.5, london: 92.40.254.141
     location = gi.record_by_addr(request.remote_addr)
-    print location
     if location and location['country_code'] in ('FI', 'SE'):
         model = {'lat': location['latitude'], 'lng': location['longitude']}
     else:
