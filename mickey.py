@@ -1,8 +1,10 @@
 #!/usr/bin/python2
+# -*- coding: utf-8 -*-
 
 import pygeoip
 import urllib2
 from flask import *
+from saferproxyfix import SaferProxyFix
 
 html_headers = {
     'Content-Type': 'text/html;charset=UTF-8'
@@ -19,6 +21,7 @@ country_urls = {
 }
 
 app = Flask(__name__)
+app.wsgi_app = SaferProxyFix(app.wsgi_app)
 
 
 @app.route('/')
