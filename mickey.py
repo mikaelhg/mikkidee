@@ -20,13 +20,14 @@ country_urls = {
     'se': 'http://apps.mcdonalds.se/sweden/restSite.nsf/markers?ReadForm'
 }
 
+gi = pygeoip.GeoIP('GeoLiteCity.dat')
+
 app = Flask(__name__)
 app.wsgi_app = SaferProxyFix(app.wsgi_app)
 
 
 @app.route('/')
 def hello():
-    gi = pygeoip.GeoIP('GeoLiteCity.dat')
     # examples - finland: 212.149.200.241, sweden: 78.108.0.5, london: 92.40.254.141
     location = gi.record_by_addr(request.remote_addr)
     if location and location['country_code'] in ('FI', 'SE'):
@@ -38,8 +39,7 @@ def hello():
 
 @app.route('/data')
 def data():
-    geojson = get_geojson()
-    return jsonify(geojson), 200, json_headers
+    return jsonify(get_geojson()), 200, json_headers
 
 
 def get_geojson():
