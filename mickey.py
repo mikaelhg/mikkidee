@@ -6,15 +6,6 @@ import urllib2
 from flask import *
 from saferproxyfix import SaferProxyFix
 
-html_headers = {
-    'Content-Type': 'text/html;charset=UTF-8'
-}
-
-json_headers = {
-    'Content-Type': 'text/json;charset=UTF-8',
-    'Access-Control-Allow-Origin:': '*'
-}
-
 country_urls = {
     'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
     'se': 'http://apps.mcdonalds.se/sweden/restSite.nsf/markers?ReadForm'
@@ -34,12 +25,12 @@ def hello():
         model = {'lat': location['latitude'], 'lng': location['longitude']}
     else:
         model = {'lat': 62.250846, 'lng': 25.768910}
-    return render_template('index.html', **model), 200, html_headers
+    return render_template('index.html', **model)
 
 
 @app.route('/data')
 def data():
-    return jsonify(get_geojson()), 200, json_headers
+    return jsonify(get_geojson())
 
 
 def get_geojson():
