@@ -31,10 +31,12 @@
     <script type="text/javascript">
       var map = L.map('map').setView([62.250846, 25.768910], 7);
 
-      geoip2.city(
-              function (loc) { map.panTo([loc.location.latitude, loc.location.longitude]); },
-              function () {}
-      );
+      if (typeof geoip2 !== 'undefined') {
+        geoip2.city(
+          function (loc) { map.panTo([loc.location.latitude, loc.location.longitude]); },
+          function () { }
+        );
+      }
 
       var osm = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg', {
           minZoom: 13,

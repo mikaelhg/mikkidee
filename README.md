@@ -1,14 +1,11 @@
 Mickey Dees.
 
-https://devcenter.heroku.com/articles/getting-started-with-python
+Open the project with IntelliJ IDEA 14 with the Python plugin installed.
 
-    virtualenv venv --distribute
-    virtualenv venv --relocatable
+Build:
 
-    source venv/bin/activate
+    sudo docker build --rm -t mikaelhg/mickeys .
 
-    pip install Flask gunicorn
-    # OR
-    pip install -r requirements.txt
-   
-    foreman start
+Run:
+     
+    sudo docker run -it --rm -p 5000:5000 mikaelhg/mickeys 
