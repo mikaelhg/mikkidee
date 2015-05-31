@@ -1,31 +1,22 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
-import pygeoip
 import urllib2
 from flask import *
-from saferproxyfix import SaferProxyFix
+from werkzeug.contrib.fixers import ProxyFix
 
 country_urls = {
     'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
     'se': 'http://apps.mcdonalds.se/sweden/restSite.nsf/markers?ReadForm'
 }
 
-gi = pygeoip.GeoIP('GeoLiteCity.dat')
-
 app = Flask(__name__)
-app.wsgi_app = SaferProxyFix(app.wsgi_app)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 @app.route('/')
 def hello():
-    # examples - finland: 212.149.200.241, sweden: 78.108.0.5, london: 92.40.254.141
-    location = gi.record_by_addr(request.remote_addr)
-    if location and location['country_code'] in ('FI', 'SE'):
-        model = {'lat': location['latitude'], 'lng': location['longitude']}
-    else:
-        model = {'lat': 62.250846, 'lng': 25.768910}
-    return render_template('index.jinja2', **model)
+    return render_template('index.jinja2')
 
 
 @app.route('/data')

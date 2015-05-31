@@ -6,4 +6,3 @@ argparse
 gunicorn
 itsdangerous
 wsgiref
-pygeoip
