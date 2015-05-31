@@ -25,15 +25,11 @@ def hello():
         model = {'lat': location['latitude'], 'lng': location['longitude']}
     else:
         model = {'lat': 62.250846, 'lng': 25.768910}
-    return render_template('index.html', **model)
+    return render_template('index.jinja2', **model)
 
 
 @app.route('/data')
 def data():
-    return jsonify(get_geojson())
-
-
-def get_geojson():
     features = []
     for country, url in country_urls.iteritems():
         try:
@@ -53,7 +49,7 @@ def get_geojson():
         'type': 'FeatureCollection',
         'features': features
     }
-    return geojson
+    return jsonify(geojson)
 
 
 def load_json(handle):
