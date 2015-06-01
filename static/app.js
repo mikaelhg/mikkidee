@@ -81,5 +81,6 @@ function timeTable(properties) {
         ret += '</td>';
     }
     ret += '</tr></table>';
+    ret += properties.remarkhours;
     return ret;
 }
