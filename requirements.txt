@@ -1,4 +1,6 @@
 Flask
+Flask-Assets
+jsmin
 Jinja2
 MarkupSafe
 Werkzeug
@@ -6,3 +8,5 @@ argparse
 gunicorn
 itsdangerous
 wsgiref
+uwsgi
+pyScss

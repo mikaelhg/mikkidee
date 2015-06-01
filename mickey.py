@@ -3,6 +3,7 @@
 
 import urllib2
 from flask import *
+from flask.ext.assets import Environment
 from werkzeug.contrib.fixers import ProxyFix
 
 country_urls = {
@@ -12,6 +13,8 @@ country_urls = {
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
+assets = Environment(app)
+assets.url = app.static_url_path
 
 
 @app.route('/')
