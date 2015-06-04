@@ -28,11 +28,7 @@ jQuery( document ).ready(function() {
     stamen.addTo(map);
 
 
-    $.ajax({
-        dataType: "json",
-        url: '/data',
-        async: true
-    }).then(
+    $.ajax({ dataType: "json", url: '/data' }).then(
         function(data, status, xhr) {
             L.geoJson([data], {
                 style: function (feature) {
