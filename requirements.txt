@@ -6,6 +6,7 @@ MarkupSafe
 Werkzeug
 argparse
 gunicorn
+gevent
 itsdangerous
 wsgiref
 uwsgi
