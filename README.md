@@ -9,3 +9,7 @@ Build:
 Run:
      
     sudo docker run -it --rm -p 5000:5000 mikaelhg/mickeys 
+
+
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="http://www.maxmind.com">http://www.maxmind.com</a>.

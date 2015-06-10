@@ -11,3 +11,4 @@ itsdangerous
 wsgiref
 uwsgi
 pyScss
+geoip2

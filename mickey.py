@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import urllib2
+
 from flask import *
 from flask.ext.assets import Environment
+from geoip2.errors import AddressNotFoundError
 from werkzeug.contrib.fixers import ProxyFix
+import geoip2.database
 
 country_urls = {
     'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
@@ -16,10 +19,22 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 assets = Environment(app)
 assets.url = app.static_url_path
 
+reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+
+
+def model():
+    ret = {}
+    try:
+        city = reader.city(request.remote_addr)
+        ret['geo'] = json.dumps({'latitude': city.location.latitude, 'longitude': city.location.longitude})
+    except AddressNotFoundError:
+        ret['geo'] = json.dumps({"latitude": 60.1756, "longitude": 24.9342})
+    return ret
+
 
 @app.route('/')
 def hello():
-    return render_template('index.jinja2')
+    return render_template('index.jinja2', **model())
 
 
 @app.route('/data')

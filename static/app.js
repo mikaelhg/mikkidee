@@ -2,11 +2,8 @@ jQuery( document ).ready(function() {
 
     var map = L.map('map').setView([62.250846, 25.768910], 7);
 
-    if (typeof geoip2 !== 'undefined') {
-        geoip2.city(
-            function (loc) { map.panTo([loc.location.latitude, loc.location.longitude]); },
-            function () { }
-        );
+    if (typeof geo !== 'undefined') {
+        map.panTo([geo.latitude, geo.longitude]);
     }
 
     var osm = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg', {
