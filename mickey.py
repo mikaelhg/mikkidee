@@ -1,13 +1,15 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
-import urllib2
+from __future__ import print_function
+from future.utils import iteritems
 
 from flask import *
-from flask.ext.assets import Environment
+from flask_assets import Environment
 from geoip2.errors import AddressNotFoundError
 from werkzeug.contrib.fixers import ProxyFix
 import geoip2.database
+import requests
 
 country_urls = {
     'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
@@ -22,29 +24,30 @@ assets.url = app.static_url_path
 reader = geoip2.database.Reader('GeoLite2-City.mmdb')
 
 
-def model():
-    ret = {}
+def model_geo(ip):
     try:
-        city = reader.city(request.remote_addr)
-        ret['geo'] = json.dumps({'latitude': city.location.latitude, 'longitude': city.location.longitude})
+        city = reader.city(ip)
+        return json.dumps({'latitude': city.location.latitude, 'longitude': city.location.longitude})
     except AddressNotFoundError:
-        ret['geo'] = json.dumps({"latitude": 60.1756, "longitude": 24.9342})
-    return ret
+        return json.dumps({"latitude": 60.1756, "longitude": 24.9342})
 
 
 @app.route('/')
 def hello():
-    return render_template('index.jinja2', **model())
+    return render_template('index.jinja2', geo=model_geo(request.remote_addr))
 
 
 @app.route('/data')
 def data():
     features = []
-    for country, url in country_urls.iteritems():
+    for country, url in iteritems(country_urls):
         try:
-            mcd_json = load_json(urllib2.urlopen(url))
-        except (urllib2.HTTPError, urllib2.URLError):
-            mcd_json = load_json(open('%s_backup.json' % country, 'r'))
+            response = requests.get(url)
+            response.raise_for_status()
+            mcd_json = response.json()
+        except requests.HTTPError:
+            with open('%s_backup.json' % country, 'r') as f:
+                mcd_json = json.loads(str(f.read()), encoding='utf-8')
         for m in mcd_json["markers"]:
             features.append({
                 'type': 'Feature',
@@ -52,21 +55,13 @@ def data():
                     'type': 'Point',
                     'coordinates': [float(m['lng']), float(m['lat'])]
                 },
-                'properties': {key: value for (key, value) in m.iteritems()}
+                'properties': {key: value for (key, value) in iteritems(m)}
             })
     geojson = {
         'type': 'FeatureCollection',
         'features': features
     }
     return jsonify(geojson)
-
-
-def load_json(handle):
-    try:
-        ret = json.loads(str(handle.read()), encoding='utf-8')
-    finally:
-        handle.close()
-    return ret
 
 
 if __name__ == "__main__":

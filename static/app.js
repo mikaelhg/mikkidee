@@ -1,29 +1,26 @@
 jQuery( document ).ready(function() {
 
-    var map = L.map('map').setView([62.250846, 25.768910], 7);
+    const map = L.map('map').setView([62.250846, 25.768910], 7);
 
     if (typeof geo !== 'undefined') {
         map.panTo([geo.latitude, geo.longitude]);
     }
 
-    var osm = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg', {
-        minZoom: 13,
-        maxZoom: 16,
-        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-        subdomains: '1234'
+    const closeup = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    osm.addTo(map);
+    closeup.addTo(map);
 
-    var stamen = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+    const artistic = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
         subdomains: 'abcd',
         minZoom: 3,
         maxZoom: 13
     });
 
-    stamen.addTo(map);
-
+    artistic.addTo(map);
 
     $.ajax({ dataType: "json", url: '/data' }).then(
         function(data, status, xhr) {

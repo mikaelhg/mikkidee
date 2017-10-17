@@ -12,3 +12,5 @@ wsgiref
 uwsgi
 pyScss
 geoip2
+requests
+future

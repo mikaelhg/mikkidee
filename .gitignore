@@ -3,3 +3,4 @@
 /.idea/
 /static/gen/
 /static/.webassets-cache/
+/.env/
