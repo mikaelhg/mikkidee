@@ -1,10 +1,10 @@
-jQuery( document ).ready(function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     const map = L.map('map').setView([62.250846, 25.768910], 7);
 
-    if (typeof geo !== 'undefined') {
-        map.panTo([geo.latitude, geo.longitude]);
-    }
+    navigator.geolocation.getCurrentPosition(position => {
+        map.panTo([position.coords.latitude, position.coords.longitude]);
+    });
 
     const closeup = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -22,8 +22,9 @@ jQuery( document ).ready(function() {
 
     artistic.addTo(map);
 
-    $.ajax({ dataType: "json", url: '/data' }).then(
-        function(data, status, xhr) {
+    fetch('./data', { method: 'get' })
+        .then(response => response.json())
+        .then(data => {
             L.geoJson([data], {
                 style: function (feature) {
                     return feature.properties && feature.properties.style;
@@ -42,9 +43,7 @@ jQuery( document ).ready(function() {
                     });
                 }
             }).addTo(map);
-        },
-        function() {}
-    );
+        });
 
 });
 
