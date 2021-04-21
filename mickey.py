@@ -1,68 +1,60 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from future.utils import iteritems
-
-from flask import *
-from flask_assets import Environment
-from geoip2.errors import AddressNotFoundError
-from werkzeug.contrib.fixers import ProxyFix
-import geoip2.database
+from starlette.applications import Starlette
+from starlette.staticfiles import StaticFiles
+from starlette.responses import HTMLResponse, JSONResponse
+from starlette.templating import Jinja2Templates
+import uvicorn
 import requests
+
 
 country_urls = {
     'fi': 'http://apps.mcdonalds.se/fi/stores.nsf/markers?ReadForm',
-    'se': 'http://apps.mcdonalds.se/sweden/restSite.nsf/markers?ReadForm'
 }
 
-app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app)
-assets = Environment(app)
-assets.url = app.static_url_path
-
-reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+_URL='https://www.mcdonalds.com/googleapps/GoogleRestaurantLocAction.do?method=searchLocation&latitude=60.16985569999999&longitude=24.9383791&radius=2500&maxResults=2500&country=fi&language=fi-fi&showClosed=&hours24Text=Open%2024%20hr'
+_REF='https://www.mcdonalds.com/fi/fi-fi/palvelut/ravintolahaku.html'
 
 
-def model_geo(ip):
-    try:
-        city = reader.city(ip)
-        return json.dumps({'latitude': city.location.latitude, 'longitude': city.location.longitude})
-    except AddressNotFoundError:
-        return json.dumps({"latitude": 60.1756, "longitude": 24.9342})
+templates = Jinja2Templates(directory='templates')
+
+app = Starlette(debug=True)
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
 @app.route('/')
-def hello():
-    return render_template('index.jinja2', geo=model_geo(request.remote_addr))
+async def homepage(request):
+    context = {'request': request}
+    return templates.TemplateResponse('index.html', context)
 
 
 @app.route('/data')
-def data():
+async def data(request):
     features = []
-    for country, url in iteritems(country_urls):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            mcd_json = response.json()
-        except requests.HTTPError:
-            with open('%s_backup.json' % country, 'r') as f:
-                mcd_json = json.loads(str(f.read()), encoding='utf-8')
-        for m in mcd_json["markers"]:
-            features.append({
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [float(m['lng']), float(m['lat'])]
-                },
-                'properties': {key: value for (key, value) in iteritems(m)}
-            })
+    try:
+        response = requests.get(_URL, headers={'Referer': _REF})
+        response.raise_for_status()
+        mcd_json = response.json()
+    except requests.HTTPError:
+        with open('mcd.json', 'r') as f:
+            mcd_json = json.loads(str(f.read()), encoding='utf-8')
+    for m in mcd_json["features"]:
+        features.append({
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': m['geometry']['coordinates']
+            },
+#            'properties': {key: value for key, value in m.items()}
+            'properties': m['properties']
+        })
     geojson = {
         'type': 'FeatureCollection',
         'features': features
     }
-    return jsonify(geojson)
+    return JSONResponse(geojson)
 
 
 if __name__ == "__main__":
-    app.run(use_debugger=False, debug=True, use_reloader=True, host='0.0.0.0')
+    uvicorn.run(app, host='0.0.0.0', port=5000)

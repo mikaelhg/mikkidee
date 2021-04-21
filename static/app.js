@@ -58,7 +58,8 @@ function fixTime(t) {
 }
 
 function timeTable(properties) {
-    var ret = properties.address + ", " + properties.city + "<br/>";
+    var ret = properties.name + ", " + properties.addressLine3 + "<br/>";
+    /*
     ret += '<table><tr>';
     for (var i = 0; i < 7; i++) {
         ret += '<td>';
@@ -72,5 +73,6 @@ function timeTable(properties) {
     }
     ret += '</tr></table>';
     ret += properties.remarkhours;
+    */
     return ret;
 }

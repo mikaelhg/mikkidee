@@ -4,3 +4,4 @@
 /static/gen/
 /static/.webassets-cache/
 /.env/
+.vscode/
