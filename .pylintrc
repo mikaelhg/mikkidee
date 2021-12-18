@@ -1,0 +1,7 @@
+disable=all
+
+enable=import-error,
+       import-self,
+       fixme,
+       global-statement,
+       eval-used

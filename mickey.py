@@ -71,7 +71,7 @@ async def homepage(request):
 
 
 @app.route('/data')
-async def data(request):
+async def data():
     try:
         restaurants = fetch_restaurants()
     except requests.HTTPError:
