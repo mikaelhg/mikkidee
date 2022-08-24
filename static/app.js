@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('./data', { method: 'get' })
         .then(response => response.json())
         .then(data => {
+            let icon = L.icon({
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                iconUrl: '/static/burger32.png'
+            });
             L.geoJson([data], {
                 style: function (feature) {
                     return feature.properties && feature.properties.style;
@@ -33,14 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     layer.bindPopup(timeTable(feature.properties));
                 },
                 pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, {
-                        radius: 8,
-                        fillColor: "#ff7800",
-                        color: "#000",
-                        weight: 1,
-                        opacity: 1,
-                        fillOpacity: 0.8
-                    });
+                    return L.marker(latlng, {icon: icon});
                 }
             }).addTo(map);
         });

@@ -71,15 +71,11 @@ async def homepage(request):
 
 
 @app.route('/data')
-async def data():
-    try:
-        restaurants = fetch_restaurants()
-    except requests.HTTPError:
-        with open('mcd.json', 'rb') as f:
-            restaurants = json.load(f)
+async def data(request):
+    restaurants = fetch_restaurants()
     geojson = convert_geojson(restaurants)
     return JSONResponse(geojson)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0', port=5000)
+    uvicorn.run(app, host='0.0.0.0', port=5050)
