@@ -6,13 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
         map.panTo([position.coords.latitude, position.coords.longitude]);
     });
 
-    const closeup = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-
-    closeup.addTo(map);
-
     const artistic = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
         subdomains: 'abcd',
@@ -22,12 +15,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     artistic.addTo(map);
 
+    const closeup = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        minZoom: 14,
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+
+    closeup.addTo(map);
+
     fetch('./data', { method: 'get' })
         .then(response => response.json())
         .then(data => {
             let icon = L.icon({
                 iconSize: [32, 32],
-                iconAnchor: [16, 32],
+                iconAnchor: [16, 16],
                 iconUrl: '/static/burger32.png'
             });
             L.geoJson([data], {
