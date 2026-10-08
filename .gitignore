@@ -1,4 +1,5 @@
 /venv/
+.venv
 __pycache__/
 *.pyc
 /.idea/
@@ -6,3 +7,4 @@ __pycache__/
 /static/.webassets-cache/
 /.env/
 .vscode/
+node_modules

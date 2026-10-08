@@ -1,18 +1,31 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 
-import json
-from starlette.applications import Starlette
-from starlette.staticfiles import StaticFiles
-from starlette.responses import JSONResponse
-from starlette.templating import Jinja2Templates
-import uvicorn
 import requests
+import uvicorn
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Mount, Route
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
+
+
+async def homepage(request):
+    context = {'request': request}
+    return templates.TemplateResponse(request, 'index.html', context)
+
+
+async def data(request):
+    restaurants = fetch_restaurants()
+    geojson = convert_geojson(restaurants)
+    return JSONResponse(geojson)
 
 
 templates = Jinja2Templates(directory='templates')
-app = Starlette(debug=True)
-app.mount('/static', StaticFiles(directory='static'), name='static')
+app = Starlette(debug=True, routes=[
+        Mount("/static", app=StaticFiles(directory="static"), name="static"),
+        Route("/", homepage),
+        Route("/data", data),
+])
 
 
 def fetch_restaurants() -> dict:
@@ -63,18 +76,6 @@ def convert_geojson(restaurants: dict) -> dict:
         'features': features
     }
 
-
-@app.route('/')
-async def homepage(request):
-    context = {'request': request}
-    return templates.TemplateResponse('index.html', context)
-
-
-@app.route('/data')
-async def data(request):
-    restaurants = fetch_restaurants()
-    geojson = convert_geojson(restaurants)
-    return JSONResponse(geojson)
 
 
 if __name__ == "__main__":
